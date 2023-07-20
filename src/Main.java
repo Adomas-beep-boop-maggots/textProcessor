@@ -1,17 +1,54 @@
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
-public class Main {
-    public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import lt.auskim.TextProcessors;
+import lt.auskim.utils.TextProcessorMapper;
+import lt.auskim.utils.TextProcessorsInput;
+import lt.auskim.utils.TextProcessor;
 
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+import java.util.ArrayList;
+import java.util.List;
 
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+class MyTextProcessors extends TextProcessors {
+    @TextProcessor.MethodName("upperCase")
+    public static class UppercaseProcessor extends TextProcessor {
+        @Override
+        public List<String> process(List<String> words) {
+            List<String> result = new ArrayList<>();
+            for (String s : words) {
+                result.add(s.toUpperCase());
+            }
+            return result;
         }
     }
+
+    // Add other custom processor classes as needed
+}
+
+
+public class Main {
+    public static void main(String[] args) {
+        TextProcessors textProcessors = new TextProcessors();
+        TextProcessorsInput input = new TextProcessorsInput(textProcessors, "input.txt");
+
+//      Process all
+        input.processAll();
+        input.processAll();
+
+//      Delete all files
+        input.deleteAllOutputFiles();
+
+////      Process one
+        input.process(TextProcessors.SortProcessor.class);
+        input.deleteAllOutputFiles();
+
+//      Custom processor
+        TextProcessors myTextProcessors = new MyTextProcessors();
+        TextProcessorsInput myInput = new TextProcessorsInput(myTextProcessors, "input.txt");
+        myInput.processAll();
+        myInput.process(MyTextProcessors.UppercaseProcessor.class);
+
+//      Delete custom files
+        myInput.deleteAllOutputFiles();
+
+
+    }
+
 }
